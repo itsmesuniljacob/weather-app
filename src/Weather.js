@@ -14,7 +14,7 @@ const Weather = React.memo(() => {
         `http://api.weatherstack.com/current`, {
           params: {
             query: cityName,
-            access_key: 'd8cc251e9fc0d96050267779c2078466'
+            access_key: 'redacted'
           }
         }
       );
