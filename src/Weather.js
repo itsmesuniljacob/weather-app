@@ -11,7 +11,12 @@ const Weather = React.memo(() => {
   const fetchWeather = async (cityName) => {
     try {
       const response = await axios.get(
-        `http://api.weatherstack.com/current?access_key=<redacted>&query=${city}`
+        `http://api.weatherstack.com/current`, {
+          params: {
+            query: cityName,
+            access_key: 'd8cc251e9fc0d96050267779c2078466'
+          }
+        }
       );
       console.log('API response:', response.data);
       setWeather(response.data);
@@ -29,16 +34,19 @@ const Weather = React.memo(() => {
     const value = e.target.value;
     setCity(value);
     console.log(`City input changed to: ${value}`);
-    if (value) {
-      debouncedFetchWeather(value);
+    if (value.trim()) {
+      debouncedFetchWeather(value.trim());
     }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(`Form submitted with city: ${city}`);
-    if (city) {
-      fetchWeather(city);
+    if (city.trim()) {
+      fetchWeather(city.trim());
+    } else {
+      setError('Please enter a city name');
+      setWeather(null);
     }
   };
 
