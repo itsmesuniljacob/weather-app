@@ -2,13 +2,25 @@
 import React, { useState, useCallback } from 'react';
 import axios from 'axios';
 import debounce from 'lodash.debounce';
+import {
+  Container,
+  TextField,
+  Button,
+  Typography,
+  Card,
+  CardContent,
+  CircularProgress,
+  Alert,
+} from '@mui/material';
 
 const Weather = React.memo(() => {
   const [city, setCity] = useState('');
   const [weather, setWeather] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const fetchWeather = async (cityName) => {
+    setLoading(true);
     try {
       const response = await axios.get(
         `http://api.weatherstack.com/current`, {
@@ -25,6 +37,8 @@ const Weather = React.memo(() => {
       console.error('API request failed:', err);
       setError('City not found');
       setWeather(null);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -51,31 +65,56 @@ const Weather = React.memo(() => {
   };
 
   return (
-    <div>
-      <h1>Weather App</h1>
+    <Container maxWidth="sm" style={{ marginTop: '2rem' }}>
+      <Typography variant="h4" gutterBottom>
+        Weather App
+      </Typography>
       <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Enter city"
+        <TextField
+          fullWidth
+          label="Enter city"
+          variant="outlined"
           value={city}
           onChange={handleChange}
+          margin="normal"
         />
-        <button type="submit">Get Weather</button>
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          fullWidth
+          disabled={loading}
+        >
+          {loading ? <CircularProgress size={24} /> : 'Get Weather'}
+        </Button>
       </form>
-      {error && <p>{error}</p>}
-      {weather && weather.current && (
-        <div>
-          <h2>Weather in {city}</h2>
-          <p>Description: {weather.current.weather_descriptions[0]}</p>
-          <p>Temperature: {weather.current.temperature}°C</p>
-          <p>Humidity: {weather.current.humidity}%</p>
-          <p>Wind Speed: {weather.current.wind_speed} km/h</p>
-          <p>Observation Time: {weather.current.observation_time}</p>
-          <p>Is Day: {weather.current.is_day}</p>
-          <img src={weather.current.weather_icons[0]} alt="weather icon" />
-        </div>
+      {error && (
+        <Alert severity="error" style={{ marginTop: '1rem' }}>
+          {error}
+        </Alert>
       )}
-    </div>
+      {weather && weather.current && (
+        <Card style={{ marginTop: '2rem' }}>
+          <CardContent>
+            <Typography variant="h5">
+              Weather in {weather.location.name}
+            </Typography>
+            <Typography>
+              Description: {weather.current.weather_descriptions[0]}
+            </Typography>
+            <Typography>
+              Temperature: {weather.current.temperature}°C
+            </Typography>
+            <Typography>
+              Humidity: {weather.current.humidity}%
+            </Typography>
+            <Typography>
+              Wind Speed: {weather.current.wind_speed} m/s
+            </Typography>
+          </CardContent>
+        </Card>
+      )}
+    </Container>
   );
 });
 
