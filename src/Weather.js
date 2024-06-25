@@ -11,6 +11,8 @@ import {
   CardContent,
   CircularProgress,
   Alert,
+  Switch,
+  FormControlLabel,
 } from '@mui/material';
 
 const Weather = React.memo(() => {
@@ -18,10 +20,12 @@ const Weather = React.memo(() => {
   const [weather, setWeather] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isCelsius, setIsCelsius] = useState(true);
 
   const fetchWeather = async (cityName) => {
     setLoading(true);
     try {
+      // const unit = isCelsius ? 'metric' : 'imperial';
       const response = await axios.get(
         `http://api.weatherstack.com/current`, {
           params: {
@@ -42,7 +46,7 @@ const Weather = React.memo(() => {
     }
   };
 
-  const debouncedFetchWeather = useCallback(debounce(fetchWeather, 500), []);
+  const debouncedFetchWeather = useCallback(debounce(fetchWeather, 500), [isCelsius]);
 
   const handleChange = (e) => {
     const value = e.target.value;
@@ -64,6 +68,13 @@ const Weather = React.memo(() => {
     }
   };
 
+  const handleToggle = () => {
+    setIsCelsius(!isCelsius);
+    if (city.trim()) {
+      fetchWeather(city.trim());
+    }
+  };
+
   return (
     <Container maxWidth="sm" style={{ marginTop: '2rem' }}>
       <Typography variant="h4" gutterBottom>
@@ -77,6 +88,17 @@ const Weather = React.memo(() => {
           value={city}
           onChange={handleChange}
           margin="normal"
+        />
+        <FormControlLabel
+          control={
+            <Switch
+              checked={isCelsius}
+              onChange={handleToggle}
+              name="temperatureToggle"
+              color="primary"
+            />
+          }
+          label={isCelsius ? "Celsius" : "Fahrenheit"}
         />
         <Button
           type="submit"
@@ -103,13 +125,13 @@ const Weather = React.memo(() => {
               Description: {weather.current.weather_descriptions[0]}
             </Typography>
             <Typography>
-              Temperature: {weather.current.temperature}°C
+              Temperature: {weather.current.temperature}°{isCelsius ? 'C' : 'F'}
             </Typography>
             <Typography>
               Humidity: {weather.current.humidity}%
             </Typography>
             <Typography>
-              Wind Speed: {weather.current.wind_speed} m/s
+              Wind Speed: {weather.current.wind_speed} {isCelsius ? 'm/s' : 'mph'}
             </Typography>
           </CardContent>
         </Card>
