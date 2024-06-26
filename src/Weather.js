@@ -106,6 +106,14 @@ const Weather = React.memo(() => {
           color="primary"
           fullWidth
           disabled={loading}
+          sx={{
+            borderRadius: '20px',
+            mt: 2,
+            transition: 'background-color 0.3s',
+            '&:hover': {
+              backgroundColor: '#0059b3',
+            }
+          }}
         >
           {loading ? <CircularProgress size={24} /> : 'Get Weather'}
         </Button>
@@ -116,7 +124,7 @@ const Weather = React.memo(() => {
         </Alert>
       )}
       {weather && weather.current && (
-        <Card style={{ marginTop: '2rem' }}>
+        <Card style={{ marginTop: '2rem', borderRadius: '15px' }}>
           <CardContent>
             <Typography variant="h5">
               Weather in {weather.location.name}
