@@ -15,6 +15,7 @@ import {
   FormControlLabel,
 } from '@mui/material';
 
+// const { axios } = require('axios')
 const Weather = React.memo(() => {
   const [city, setCity] = useState('');
   const [weather, setWeather] = useState(null);
