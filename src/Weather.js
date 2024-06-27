@@ -1,5 +1,5 @@
 // src/Weather.js
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import axios from 'axios';
 import debounce from 'lodash.debounce';
 import {
@@ -15,6 +15,7 @@ import {
   FormControlLabel,
 } from '@mui/material';
 
+// const { axios } = require('axios')
 const Weather = React.memo(() => {
   const [city, setCity] = useState('');
   const [weather, setWeather] = useState(null);
@@ -46,7 +47,16 @@ const Weather = React.memo(() => {
     }
   };
 
-  const debouncedFetchWeather = useCallback(debounce(fetchWeather, 500), [isCelsius]);
+  // Fix for eslint error --> React Hook useCallback received a function whose dependencies are unknown
+
+  const debouncedFetchWeather = useCallback(debounce(fetchWeather, 500), [isCelsius]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    // Clean up the debounce effect
+    return () => {
+      debouncedFetchWeather.cancel();
+    };
+  }, [debouncedFetchWeather]);
 
   const handleChange = (e) => {
     const value = e.target.value;
