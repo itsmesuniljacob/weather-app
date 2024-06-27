@@ -27,8 +27,8 @@ jobs:
       - name: Build the app
         run: npm run build
 
-      # - name: Run tests
-      #   run: npm test
+      - name: Run tests
+        run: npm test
 
       # - name: Build Docker image
       #   run: docker build -t react-weather-app .
