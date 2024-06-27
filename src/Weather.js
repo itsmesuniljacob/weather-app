@@ -1,5 +1,5 @@
 // src/Weather.js
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import axios from 'axios';
 import debounce from 'lodash.debounce';
 import {
@@ -46,7 +46,19 @@ const Weather = React.memo(() => {
     }
   };
 
+  // Fix for eslint error --> React Hook useCallback received a function whose dependencies are unknown
+  const cachedFn = useCallback(function(){
+    // I am an inline function
+  }, []);
+
   const debouncedFetchWeather = useCallback(debounce(fetchWeather, 500), [isCelsius]);
+
+  useEffect(() => {
+    // Clean up the debounce effect
+    return () => {
+      debouncedFetchWeather.cancel();
+    };
+  }, [debouncedFetchWeather]);
 
   const handleChange = (e) => {
     const value = e.target.value;
