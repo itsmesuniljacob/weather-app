@@ -47,11 +47,8 @@ const Weather = React.memo(() => {
   };
 
   // Fix for eslint error --> React Hook useCallback received a function whose dependencies are unknown
-  const cachedFn = useCallback(function(){
-    // I am an inline function
-  }, []);
 
-  const debouncedFetchWeather = useCallback(debounce(fetchWeather, 500), [isCelsius]);
+  const debouncedFetchWeather = useCallback(debounce(fetchWeather, 500), [isCelsius]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     // Clean up the debounce effect
